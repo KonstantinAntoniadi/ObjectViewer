@@ -1,6 +1,10 @@
 #include "Command.h"
 
 #include <cmath>
+// #include <omp.h>
+// #include <algorithm>
+// #include <execution>
+#include <dispatch/dispatch.h>
 
 namespace object_viewer {
 
@@ -50,30 +54,85 @@ Rotate::Rotate(double x_angel, double y_angel, double z_angel)
 void Rotate::Execute(Object* obj) {
   if (std::fabs(x_angel_) > eps_) {
     double x_rad = ConvertDegToRad(x_angel_);
-    for (auto& p : obj->vertexes_) {
-      double temp_y = p.y;
-      double temp_z = p.z;
-      p.y = temp_y * std::cos(x_rad) + temp_z * std::sin(x_rad);
-      p.z = -temp_y * std::sin(x_rad) + temp_z * std::cos(x_rad);
-    }
+    // std::for_each(std::execution::par, obj->vertexes_.begin(),
+    // obj->vertexes_.end(), [x_rad](auto& p) {
+    //   double temp_y = p.y;
+    //   double temp_z = p.z;
+    //   p.y = temp_y * std::cos(x_rad) + temp_z * std::sin(x_rad);
+    //   p.z = -temp_y * std::sin(x_rad) + temp_z * std::cos(x_rad);
+    // });
+    // #pragma omp parallel for
+    dispatch_apply(
+        obj->vertexes_.size(),
+        dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),
+        ^(size_t i) {
+          auto& p = obj->vertexes_[i];
+          double temp_y = p.y;
+          double temp_z = p.z;
+          p.y = temp_y * std::cos(x_rad) + temp_z * std::sin(x_rad);
+          p.z = -temp_y * std::sin(x_rad) + temp_z * std::cos(x_rad);
+        });
+    // for (auto& p : obj->vertexes_) {
+    //   double temp_y = p.y;
+    //   double temp_z = p.z;
+    //   p.y = temp_y * std::cos(x_rad) + temp_z * std::sin(x_rad);
+    //   p.z = -temp_y * std::sin(x_rad) + temp_z * std::cos(x_rad);
+    // }
   }
   if (std::fabs(y_angel_) > eps_) {
     double y_rad = ConvertDegToRad(y_angel_);
-    for (auto& p : obj->vertexes_) {
-      double temp_x = p.x;
-      double temp_z = p.z;
-      p.x = std::cos(y_rad) * temp_x + std::sin(y_rad) * temp_z;
-      p.z = std::sin(y_rad) * (-temp_x) + std::cos(y_rad) * temp_z;
-    }
+    dispatch_apply(
+        obj->vertexes_.size(),
+        dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),
+        ^(size_t i) {
+          auto& p = obj->vertexes_[i];
+          double temp_x = p.x;
+          double temp_z = p.z;
+          p.x = std::cos(y_rad) * temp_x + std::sin(y_rad) * temp_z;
+          p.z = std::sin(y_rad) * (-temp_x) + std::cos(y_rad) * temp_z;
+        });
+
+    // #pragma omp parallel for
+    // for (auto& p : obj->vertexes_) {
+    //   double temp_x = p.x;
+    //   double temp_z = p.z;
+    //   p.x = std::cos(y_rad) * temp_x + std::sin(y_rad) * temp_z;
+    //   p.z = std::sin(y_rad) * (-temp_x) + std::cos(y_rad) * temp_z;
+    // }
+    // std::for_each(std::execution::par, obj->vertexes_.begin(),
+    // obj->vertexes_.end(), [y_rad](auto& p){
+    //   double temp_x = p.x;
+    //   double temp_z = p.z;
+    //   p.x = std::cos(y_rad) * temp_x + std::sin(y_rad) * temp_z;
+    //   p.z = std::sin(y_rad) * (-temp_x) + std::cos(y_rad) * temp_z;
+    // });
   }
   if (std::fabs(z_angel_) > eps_) {
     double z_rad = ConvertDegToRad(z_angel_);
-    for (auto& p : obj->vertexes_) {
-      double temp_x = p.x;
-      double temp_y = p.y;
-      p.x = temp_x * std::cos(z_rad) + temp_y * std::sin(z_rad);
-      p.y = -temp_x * std::sin(z_rad) + temp_y * std::cos(z_rad);
-    }
+    dispatch_apply(
+        obj->vertexes_.size(),
+        dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),
+        ^(size_t i) {
+          auto& p = obj->vertexes_[i];
+          double temp_x = p.x;
+          double temp_y = p.y;
+          p.x = temp_x * std::cos(z_rad) + temp_y * std::sin(z_rad);
+          p.y = -temp_x * std::sin(z_rad) + temp_y * std::cos(z_rad);
+        });
+    // std::for_each(std::execution::par, obj->vertexes_.begin(),
+    // obj->vertexes_.end(), [z_rad](auto& p) {
+    //   double temp_x = p.x;
+    //   double temp_y = p.y;
+    //   p.x = temp_x * std::cos(z_rad) + temp_y * std::sin(z_rad);
+    //   p.y = -temp_x * std::sin(z_rad) + temp_y * std::cos(z_rad);
+    // });
+    // #pragma omp parallel for
+    // for (auto& p : obj->vertexes_) {
+    //   double temp_x = p.x;
+    //   double temp_y = p.y;
+    //   p.x = temp_x * std::cos(z_rad) + temp_y * std::sin(z_rad);
+    //   p.y = -temp_x * std::sin(z_rad) + temp_y * std::cos(z_rad);
+    // }
   }
 }
 
