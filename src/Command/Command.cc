@@ -1,10 +1,12 @@
 #include "Command.h"
 
 #include <cmath>
-// #include <omp.h>
-// #include <algorithm>
-// #include <execution>
+
+#ifdef __APPLE__
 #include <dispatch/dispatch.h>
+#else
+#include <omp.h>
+#endif
 
 namespace object_viewer {
 
@@ -29,7 +31,7 @@ std::any Move::Undo(Object* obj) {
 }
 double Move::GetX() { return x_; }
 double Move::GetY() { return y_; }
-double Move::GetZ() { return z_; };
+double Move::GetZ() { return z_; }
 
 Scale::Scale(double scale) : scale_(scale) {}
 
@@ -54,14 +56,7 @@ Rotate::Rotate(double x_angel, double y_angel, double z_angel)
 void Rotate::Execute(Object* obj) {
   if (std::fabs(x_angel_) > eps_) {
     double x_rad = ConvertDegToRad(x_angel_);
-    // std::for_each(std::execution::par, obj->vertexes_.begin(),
-    // obj->vertexes_.end(), [x_rad](auto& p) {
-    //   double temp_y = p.y;
-    //   double temp_z = p.z;
-    //   p.y = temp_y * std::cos(x_rad) + temp_z * std::sin(x_rad);
-    //   p.z = -temp_y * std::sin(x_rad) + temp_z * std::cos(x_rad);
-    // });
-    // #pragma omp parallel for
+#ifdef __APPLE__
     dispatch_apply(
         obj->vertexes_.size(),
         dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),
@@ -72,15 +67,19 @@ void Rotate::Execute(Object* obj) {
           p.y = temp_y * std::cos(x_rad) + temp_z * std::sin(x_rad);
           p.z = -temp_y * std::sin(x_rad) + temp_z * std::cos(x_rad);
         });
-    // for (auto& p : obj->vertexes_) {
-    //   double temp_y = p.y;
-    //   double temp_z = p.z;
-    //   p.y = temp_y * std::cos(x_rad) + temp_z * std::sin(x_rad);
-    //   p.z = -temp_y * std::sin(x_rad) + temp_z * std::cos(x_rad);
-    // }
+#else
+#pragma omp parallel for
+    for (auto& p : obj->vertexes_) {
+      double temp_y = p.y;
+      double temp_z = p.z;
+      p.y = temp_y * std::cos(x_rad) + temp_z * std::sin(x_rad);
+      p.z = -temp_y * std::sin(x_rad) + temp_z * std::cos(x_rad);
+    }
+#endif
   }
   if (std::fabs(y_angel_) > eps_) {
     double y_rad = ConvertDegToRad(y_angel_);
+#ifdef __APPLE__
     dispatch_apply(
         obj->vertexes_.size(),
         dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),
@@ -91,24 +90,19 @@ void Rotate::Execute(Object* obj) {
           p.x = std::cos(y_rad) * temp_x + std::sin(y_rad) * temp_z;
           p.z = std::sin(y_rad) * (-temp_x) + std::cos(y_rad) * temp_z;
         });
-
-    // #pragma omp parallel for
-    // for (auto& p : obj->vertexes_) {
-    //   double temp_x = p.x;
-    //   double temp_z = p.z;
-    //   p.x = std::cos(y_rad) * temp_x + std::sin(y_rad) * temp_z;
-    //   p.z = std::sin(y_rad) * (-temp_x) + std::cos(y_rad) * temp_z;
-    // }
-    // std::for_each(std::execution::par, obj->vertexes_.begin(),
-    // obj->vertexes_.end(), [y_rad](auto& p){
-    //   double temp_x = p.x;
-    //   double temp_z = p.z;
-    //   p.x = std::cos(y_rad) * temp_x + std::sin(y_rad) * temp_z;
-    //   p.z = std::sin(y_rad) * (-temp_x) + std::cos(y_rad) * temp_z;
-    // });
+#else
+#pragma omp parallel for
+    for (auto& p : obj->vertexes_) {
+      double temp_x = p.x;
+      double temp_z = p.z;
+      p.x = std::cos(y_rad) * temp_x + std::sin(y_rad) * temp_z;
+      p.z = std::sin(y_rad) * (-temp_x) + std::cos(y_rad) * temp_z;
+    }
+#endif
   }
   if (std::fabs(z_angel_) > eps_) {
     double z_rad = ConvertDegToRad(z_angel_);
+#ifdef __APPLE__
     dispatch_apply(
         obj->vertexes_.size(),
         dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),
@@ -119,20 +113,15 @@ void Rotate::Execute(Object* obj) {
           p.x = temp_x * std::cos(z_rad) + temp_y * std::sin(z_rad);
           p.y = -temp_x * std::sin(z_rad) + temp_y * std::cos(z_rad);
         });
-    // std::for_each(std::execution::par, obj->vertexes_.begin(),
-    // obj->vertexes_.end(), [z_rad](auto& p) {
-    //   double temp_x = p.x;
-    //   double temp_y = p.y;
-    //   p.x = temp_x * std::cos(z_rad) + temp_y * std::sin(z_rad);
-    //   p.y = -temp_x * std::sin(z_rad) + temp_y * std::cos(z_rad);
-    // });
-    // #pragma omp parallel for
-    // for (auto& p : obj->vertexes_) {
-    //   double temp_x = p.x;
-    //   double temp_y = p.y;
-    //   p.x = temp_x * std::cos(z_rad) + temp_y * std::sin(z_rad);
-    //   p.y = -temp_x * std::sin(z_rad) + temp_y * std::cos(z_rad);
-    // }
+#else
+#pragma omp parallel for
+    for (auto& p : obj->vertexes_) {
+      double temp_x = p.x;
+      double temp_y = p.y;
+      p.x = temp_x * std::cos(z_rad) + temp_y * std::sin(z_rad);
+      p.y = -temp_x * std::sin(z_rad) + temp_y * std::cos(z_rad);
+    }
+#endif
   }
 }
 
@@ -148,7 +137,7 @@ std::any Rotate::Undo(Object* obj) {
 }
 
 double Rotate::GetXAngel() { return x_angel_; }
-double Rotate::GetYAngel() { return y_angel_; };
+double Rotate::GetYAngel() { return y_angel_; }
 double Rotate::GetZAngel() { return z_angel_; }
 
 }  // namespace object_viewer

@@ -2,23 +2,37 @@ CC=g++
 CFLAGS=-Wall -Werror -Wextra
 CLANG_FORMAT ?= clang-format
 OS := $(shell uname)
+BUILD = ../build
 
 .PHONY: all
 all: clean install open
 
 .PHONY: install
 install: clean
-	cmake -G "Unix Makefiles" -B ./build
-	cmake --build ./build --target ObjectViewer --parallel 8
-	mv build/ObjectViewer.app ~/Desktop
+	cmake -G "Unix Makefiles" -B $(BUILD)
+	cmake --build $(BUILD) --target ObjectViewer --parallel 8
+ifeq ($(OS),Darwin)
+	cp -r $(BUILD)/ObjectViewer.app ~/Desktop
+else
+	cp -r $(BUILD)/ObjectViewer ~/Desktop
+endif
 
 .PHONY: uninstall
 uninstall:
+ifeq ($(OS),Darwin)
 	rm -rf ~/Desktop/ObjectViewer.app
+else
+	rm -rf ~/Desktop/ObjectViewer
+endif
 
 .PHONY: open
 open:
+ifeq ($(OS),Darwin)
 	@open -n ~/Desktop/ObjectViewer.app --args -AppCommandLineArg
+else
+	~/Desktop/ObjectViewer
+endif
+	
 
 .PHONY: dvi
 dvi:
@@ -54,7 +68,7 @@ check:
 clean:
 	@rm -rf *.o
 	@rm -rf unit_test
-	@rm -rf build/
+	@rm -rf $(BUILD)
 	@rm -rf ObjectViewer
 	@rm -rf CMakeLists.txt.user
 	@rm -rf ObjectViewer.tar.gz

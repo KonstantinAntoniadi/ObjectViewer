@@ -10,9 +10,17 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wpedantic -Werror")
+
+if (APPLE)
+    set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wpedantic -Werror")
+else()
+    set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wpedantic -Werror -fopenmp")
+endif()
+
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "$ENV{QT5_DIR}/lib/cmake")
+if (APPLE)
+    set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "$ENV{QT5_DIR}/lib/cmake")
+endif()
 
 find_package(OpenGL REQUIRED)
 find_package(Qt6 REQUIRED COMPONENTS OpenGL)
@@ -21,8 +29,11 @@ find_package(Qt6 REQUIRED COMPONENTS Gui)
 
 include_directories( ${OPENGL_INCLUDE_DIRS}  ${GLUT_INCLUDE_DIRS} )
 
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools)
-
+if (APPLE)
+    find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools)
+else()
+    find_package(Qt6 REQUIRED COMPONENTS Widgets LinguistTools)
+endif()
 
 include_directories("./third_party/QtGifImage/src/gifimage" "./third_party/QtGifImage/src/3rdParty/giflib")
 set(PROJECT_SOURCES
@@ -81,11 +92,17 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         ${PROJECT_SOURCES}
     )
 
+    qt6_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
+else()
+    qt_add_executable(ObjectViewer
+        MANUAL_FINALIZATION
+        ${PROJECT_SOURCES}
+    )
     qt_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
-
 endif()
 target_include_directories(ObjectViewer PRIVATE src)
 
+if (APPLE)
 set_target_properties(ObjectViewer PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
     MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
@@ -93,6 +110,8 @@ set_target_properties(ObjectViewer PROPERTIES
     MACOSX_BUNDLE TRUE
     WIN32_EXECUTABLE TRUE
 )
+endif()
+
 target_link_libraries(ObjectViewer PRIVATE Qt6::OpenGL)
 target_link_libraries(ObjectViewer PRIVATE Qt6::Gui)
 target_link_libraries(ObjectViewer PRIVATE Qt6::OpenGLWidgets)
