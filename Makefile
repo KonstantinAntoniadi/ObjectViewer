@@ -8,7 +8,8 @@ all: clean install open
 
 .PHONY: install
 install: clean
-	mkdir build && cd build && cmake ../CMakeLists.txt && make
+	cmake -G "Unix Makefiles" -B ./build
+	cmake --build ./build --target ObjectViewer --parallel 8
 	mv build/ObjectViewer.app ~/Desktop
 
 .PHONY: uninstall
