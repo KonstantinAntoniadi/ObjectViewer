@@ -11,7 +11,7 @@
 
 namespace object_viewer {
 MainWindow::MainWindow(Controller* controller, QWidget* parent)
-    : controller_(controller), QMainWindow(parent), ui_(new Ui::MainWindow) {
+    : QMainWindow(parent), ui_(new Ui::MainWindow), controller_(controller) {
   ui_->setupUi(this);
   ui_->GLwidget->SetController(controller);
   this->setFixedSize(1420, 810);

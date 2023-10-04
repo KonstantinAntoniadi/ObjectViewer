@@ -6,7 +6,7 @@ namespace object_viewer {
 
 ObjectViewer::ObjectViewer(ObjectFileReader* reader, Transformer* transformer,
                            MediaSaver* media_saver)
-    : reader_(reader), transformer_(transformer), media_saver_(media_saver){};
+    : transformer_(transformer), media_saver_(media_saver), reader_(reader){};
 
 void ObjectViewer::UploadObjectFromFile(const std::string& filepath) {
   transformer_->ClearCommands();
