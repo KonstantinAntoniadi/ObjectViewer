@@ -27,7 +27,8 @@ int main(int argc, char* argv[]) {
   object_viewer::Transformer transformer{};
   object_viewer::ObjectFileReader reader{};
   object_viewer::MediaSaver media_saver{};
-  object_viewer::ObjectViewer object_viewer(&reader, &transformer, &media_saver);
+  object_viewer::ObjectViewer object_viewer(&reader, &transformer,
+                                            &media_saver);
   object_viewer::Controller object_viewer_controller(&object_viewer);
   object_viewer::MainWindow w(&object_viewer_controller);
   w.show();
