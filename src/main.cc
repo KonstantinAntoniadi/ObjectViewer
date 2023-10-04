@@ -3,7 +3,7 @@
 #include <QTranslator>
 
 #include "src/Controller/Controller.h"
-#include "src/FileReader/ObjectFilereader.h"
+#include "src/FileReader/ObjectFileReader.h"
 #include "src/MediaSaver/MediaSaver.h"
 #include "src/ObjectViewer/ObjectViewer.h"
 #include "src/Transformer/Transformer.h"

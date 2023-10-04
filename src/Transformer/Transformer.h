@@ -23,5 +23,5 @@ class Transformer {
   int cur_command_ = -1;
 };
 
-};  // namespace object_viewer
+}  // namespace object_viewer
 #endif

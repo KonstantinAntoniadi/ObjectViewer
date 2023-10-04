@@ -54,9 +54,9 @@ size_t Controller::GetCountVertexes() {
 }
 size_t Controller::GetCountEdges() { return object_viewer_->GetCountEdges(); }
 
-int Controller::GetSize() { return object_viewer_->GetSize(); };
-float Controller::GetFar() { return object_viewer_->GetFar(); };
-float Controller::GetFov() { return object_viewer_->GetFov(); };
-float Controller::GetHeapHeight() { return object_viewer_->GetHeapHeight(); };
+int Controller::GetSize() { return object_viewer_->GetSize(); }
+float Controller::GetFar() { return object_viewer_->GetFar(); }
+float Controller::GetFov() { return object_viewer_->GetFov(); }
+float Controller::GetHeapHeight() { return object_viewer_->GetHeapHeight(); }
 
 }  // namespace object_viewer

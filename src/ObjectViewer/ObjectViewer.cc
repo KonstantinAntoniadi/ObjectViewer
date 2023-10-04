@@ -6,7 +6,7 @@ namespace object_viewer {
 
 ObjectViewer::ObjectViewer(ObjectFileReader* reader, Transformer* transformer,
                            MediaSaver* media_saver)
-    : transformer_(transformer), media_saver_(media_saver), reader_(reader){};
+    : transformer_(transformer), media_saver_(media_saver), reader_(reader) {}
 
 void ObjectViewer::UploadObjectFromFile(const std::string& filepath) {
   transformer_->ClearCommands();
@@ -94,10 +94,10 @@ size_t ObjectViewer::GetCountFacets() { return obj_->facets_.size(); }
 size_t ObjectViewer::GetCountVertexes() { return obj_->vertexes_.size(); }
 size_t ObjectViewer::GetCountEdges() { return obj_->facets_.size() / 2; }
 
-int ObjectViewer::GetSize() { return size_; };
-float ObjectViewer::GetFar() { return far_; };
-float ObjectViewer::GetFov() { return fov_; };
-float ObjectViewer::GetHeapHeight() { return heap_height_; };
+int ObjectViewer::GetSize() { return size_; }
+float ObjectViewer::GetFar() { return far_; }
+float ObjectViewer::GetFov() { return fov_; }
+float ObjectViewer::GetHeapHeight() { return heap_height_; }
 
 int ObjectViewer::size_ = 1;
 float ObjectViewer::far_ = 150.0f;

@@ -7,7 +7,7 @@
 #include <memory>
 
 #include "src/Command/Command.h"
-#include "src/FileReader/ObjectFilereader.h"
+#include "src/FileReader/ObjectFileReader.h"
 #include "src/MediaSaver/MediaSaver.h"
 #include "src/Object/Object.h"
 #include "src/Settings/Settings.h"
