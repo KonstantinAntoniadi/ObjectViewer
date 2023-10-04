@@ -10,6 +10,7 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wpedantic -Werror")
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "$ENV{QT5_DIR}/lib/cmake")
 
@@ -97,6 +98,3 @@ target_link_libraries(ObjectViewer PRIVATE Qt6::Gui)
 target_link_libraries(ObjectViewer PRIVATE Qt6::OpenGLWidgets)
 target_link_libraries(ObjectViewer PRIVATE Qt6::Core)
 set_source_files_properties(resources/icons/icon.icns PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
-
-
-add_compile_options("-Wall -Wextra -Wpedantic -Werror")
