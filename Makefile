@@ -2,7 +2,7 @@ CC=g++
 CFLAGS=-Wall -Werror -Wextra
 CLANG_FORMAT ?= clang-format
 OS := $(shell uname)
-BUILD = ../build
+BUILD = ./build
 
 .PHONY: all
 all: clean install open
